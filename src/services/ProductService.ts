@@ -11,6 +11,8 @@ export async function getMateriales() {
     }
 }
 
+const variable = "kevin"
+
 export async function updateMaterialCantidad(data, id) {
     try {
         console.log(data);

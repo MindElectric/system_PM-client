@@ -1,8 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { updateMaterialCantidad } from '../services/ProductService';
-import { ToastContainer, toast } from 'react-toastify';
+
 //import { ActionFunctionArgs } from 'react-router-dom'
 
 
@@ -11,10 +11,26 @@ import { ToastContainer, toast } from 'react-toastify';
 // }
 
 const ProductDetails = ({ material,
+    handleToast
     //setIsBoxVisible 
 }) => {
     const [materialCantidad, setMaterialCantidad] = useState(material.cantidad);
     const [isBoxVisible, setIsBoxVisible] = useState(false);
+    const [isBoxRendered, setIsBoxRendered] = useState(false);
+    const [animationClass, setAnimationClass] = useState('');
+
+    useEffect(() => {
+        if (isBoxVisible) {
+            setIsBoxRendered(true);
+            setAnimationClass('animate-slide-down');
+        } else {
+            setAnimationClass('animate-slide-up');
+            const timer = setTimeout(() => {
+                setIsBoxRendered(false);
+            }, 500); // Matches the duration of your animation
+            return () => clearTimeout(timer);
+        }
+    }, [isBoxVisible]);
 
     const decrease = () => {
         setMaterialCantidad(materialCantidad - 1);
@@ -28,6 +44,7 @@ const ProductDetails = ({ material,
 
     const handleClick = () => {
         updateMaterialCantidad(materialCantidad, material.id)
+        handleToast()
         setIsBoxVisible(false)
         //toast("Cambios hechos satisfactoriamente")
     }
@@ -42,11 +59,17 @@ const ProductDetails = ({ material,
                     {material.codigo}
                 </td>
                 <td className="p-2 text-lg text-gray-800 flex justify-around items-center">
-                    <button id='restar-cantidad' onClick={() => decrease()} className="bg-green-400 rounded-full hover:bg-green-600 p-2 h-10 w-10  flex justify-center items-center"><FontAwesomeIcon icon={faMinus} color='white' /></button>
+                    <button id='restar-cantidad'
+                        aria-label='Restar cantidad de material'
+                        onClick={() => decrease()}
+                        className="bg-green-400 rounded-full hover:bg-green-600 p-2 h-10 w-10  flex justify-center items-center"><FontAwesomeIcon icon={faMinus} color='white' /></button>
                     <div className="text-center">
                         {materialCantidad}
                     </div>
-                    <button id='sumar-cantidad' onClick={() => increase()} className="bg-green-400 rounded-full hover:bg-green-600 p-2 h-10 w-10  flex justify-center items-center"><FontAwesomeIcon icon={faPlus} color='white' /></button>
+                    <button id='sumar-cantidad'
+                        aria-label='Aumentar cantidad de material'
+                        onClick={() => increase()}
+                        className="bg-green-400 rounded-full hover:bg-green-600 p-2 h-10 w-10  flex justify-center items-center"><FontAwesomeIcon icon={faPlus} color='white' /></button>
                 </td>
                 <td className="p-3 text-lg text-gray-800 ">
                     {material.costo}
@@ -65,9 +88,9 @@ const ProductDetails = ({ material,
             </tr>
 
 
-            {isBoxVisible && (
+            {isBoxRendered && (
                 <tr>
-                    <td colSpan={7} className='h-14 bg-slate-50 animate-slide-down'>
+                    <td colSpan={7} className={`h-14 bg-slate-50 ${animationClass}`}>
                         <div className="flex justify-end slide-down-box">
                             <input
                                 id='confirmar-cantidad'

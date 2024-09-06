@@ -1,6 +1,8 @@
 import { Link, useLoaderData } from "react-router-dom"
 import { getMateriales } from "../services/ProductService"
 import ProductDetails from "../Components/ProductDetails"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export async function loader() {
@@ -13,27 +15,34 @@ export async function loader() {
 
 const Materiales = () => {
     const materiales = useLoaderData();
+    //const [isToast, setIsToast] = useState(false);
+
+    const handleToast = () => {
+        toast("Cambios hechos correctamente");
+    }
+
     return (
         <>
+            <ToastContainer />
             <div className="flex justify-between">
                 <h2 className="text-4xl font-black text-slate-500">Materiales</h2>
                 <Link
                     to="materiales/nuevo"
-                    className="rounded-sm bg-green-400 p-3 text-sm font-bold text-white shadow hover:bg-green-600"
+                    className="p-3 text-sm font-bold text-white bg-green-400 rounded-sm shadow hover:bg-green-600"
                 >
                     Agregar Material
                 </Link>
-                <Link
+                {/* <Link
                     to="/inv"
-                    className="rounded-sm bg-green-400 p-3 text-sm font-bold text-white shadow hover:bg-green-600"
+                    className="p-3 text-sm font-bold text-white bg-green-400 rounded-sm shadow hover:bg-green-600"
                 >
                     Ir a inventario
-                </Link>
+                </Link> */}
             </div>
 
             <div className="p-2">
                 <table className="w-full mt-5 table-auto">
-                    <thead className="bg-slate-800 text-white">
+                    <thead className="text-white bg-slate-800">
                         <tr>
                             <th className="p-2">Descripcion</th>
                             <th className="p-2">Codigo</th>
@@ -49,6 +58,7 @@ const Materiales = () => {
                             <ProductDetails
                                 key={material.id}
                                 material={material}
+                                handleToast={handleToast}
                             />
                         ))}
 
